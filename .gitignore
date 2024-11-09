@@ -1,0 +1,43 @@
+﻿# Ignore environment variables - contain sentitive data
+/.env
+
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+packages/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.ide
+
+# Ignore Rider specific files
+.idea/
+.idea_modules/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dotnettools.xml
+
+# Ignore build directories
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore all coverage files
+coverage/
+*.coverage
+*.coveragexml
+_coverage/
+
+# Ignore NPM files
+node_modules/
+npm-debug.log
+
+# Ignore Visual Studio cache files
+.vscode/
+.vs/

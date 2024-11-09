@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TikaElastic": {
+      "commandName": "Project",
+      "commandLineArgs": "clear"
+    }
+  }
+}
