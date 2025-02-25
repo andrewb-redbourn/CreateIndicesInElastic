@@ -41,3 +41,4 @@ npm-debug.log
 # Ignore Visual Studio cache files
 .vscode/
 .vs/
+/Marketing

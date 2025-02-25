@@ -2,6 +2,7 @@
 using Elastic.Clients.Elasticsearch.IndexManagement;
 using Elastic.Clients.Elasticsearch.Mapping;
 using Elastic.Transport;
+using UglyToad.PdfPig.Fonts.TrueType.Tables;
 
 namespace CreateIndicesInElastic;
 public class ExtractToElastic
@@ -11,19 +12,29 @@ public class ExtractToElastic
     public string Basicauth { get; init; }
     public string Url { get; init; }
     public string UserName { get; init; }
+    public string ApiKey { get; set; }
     public string ElasticIndex { get;  init; }
 
-    public ExtractToElastic(string _elasticIndex, string url, string userName, string password)
+    public ExtractToElastic(string _elasticIndex, string url, string userName, string password, string apikey)
     {
         Url = url;
         UserName = userName;
         Basicauth = password;
+        ApiKey = apikey;
         ElasticIndex = _elasticIndex;
+        
         var settings = new ElasticsearchClientSettings(new Uri(Url))
-            .Authentication(new BasicAuthentication(UserName, Basicauth))
+            //.Authentication(authenticator)
             .DefaultIndex(ElasticIndex)
             .EnableDebugMode();
-
+        if (ApiKey is { Length: >0 })
+        {
+            settings.Authentication(new ApiKey(ApiKey));
+        }
+        else
+        {
+            settings.Authentication(new BasicAuthentication(UserName, Basicauth));
+        }
         _elasticClient = new ElasticsearchClient(settings);
 
         var response = _elasticClient.PingAsync().GetAwaiter().GetResult();

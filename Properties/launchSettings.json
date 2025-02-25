@@ -2,7 +2,8 @@
   "profiles": {
     "TikaElastic": {
       "commandName": "Project",
-      "commandLineArgs": "clear"
+      "commandLineArgs": "https://7259d372cc0f44ffa3c5ffe0e7a8720b.us-central1.gcp.cloud.es.io --apikey RWZtSlBaVUI5WEM2Skx4VWVWT2s6bEVKRmktbERSai1DZWZOR2R6WWZHZw==  --clear -d . --index index ",
+      "workingDirectory": "C:\\Users\\andrew.briers\\source\\repos\\andrewb-redbourn\\CreateIndicesInElastic\\Marketing"
     }
   }
 }

@@ -4,6 +4,7 @@ using DotNetEnv;
 var elasticUrl = string.Empty;
 var elasticUser = string.Empty;
 var elasticPassword = string.Empty;
+var elasticApi = string.Empty;
 var elasticIndex = string.Empty;
 var filesToIndex = Array.Empty<string[]>();
 var clearIndex = false;
@@ -52,22 +53,13 @@ void ProcessArgs(string[] args)
                       throw new ArgumentNullException("ELASTIC_URL");
         elasticUser = Environment.GetEnvironmentVariable("ELASTIC_USER") ??
                        throw new ArgumentNullException("ELASTIC_USER");
-        elasticPassword = Environment.GetEnvironmentVariable("ELASTIC_PASSWORD") ??
-                           throw new ArgumentNullException("ELASTIC_PASSWORD");
+        elasticPassword = Environment.GetEnvironmentVariable("ELASTIC_PASSWORD");
+        elasticApi = Environment.GetEnvironmentVariable("ELASTIC_APIKEY");
     }
     else
     {
         elasticUrl = args[0]?.Trim() ?? throw new ArgumentNullException("elasticUrl");
-        elasticUser = args[1]?.Trim() ?? throw new ArgumentNullException("elasticUser");
-        elasticPassword = args[2]?.Trim() ?? throw new ArgumentNullException("elasticPassword");
-        startPoint = 3;
-    }
-
-    if (string.IsNullOrWhiteSpace(elasticUrl) || string.IsNullOrWhiteSpace(elasticUser) ||
-        string.IsNullOrWhiteSpace(elasticPassword))
-    {
-        Console.WriteLine("**URL, user, and password are required**");
-        Environment.Exit(-3);
+        startPoint = 1;
     }
 
     for (var index = startPoint; index < args.Length; index++)
@@ -122,6 +114,18 @@ void ProcessArgs(string[] args)
             case "--clear":
                 clearIndex = true;
                 break;
+            case "-u":
+                case "--user":
+                elasticUser = args[++index];
+                break;
+            case "-p":
+                case "--password":
+                elasticPassword = args[++index];
+                break;
+            case "-a":
+            case "--apikey":
+                elasticApi = args[++index];
+                break;
             default:
                 throw new NotSupportedException($"Unknown argument: {args[index]}");
         }
@@ -131,6 +135,17 @@ void ProcessArgs(string[] args)
     {
         Console.WriteLine("**Index name is required**");
         Environment.Exit(-1);
+    }
+
+    if (string.IsNullOrWhiteSpace(elasticUrl))
+    {
+        Console.WriteLine("**URL is required**");
+    } 
+    if ((string.IsNullOrWhiteSpace(elasticUser) ||
+        string.IsNullOrWhiteSpace(elasticPassword)) && string.IsNullOrWhiteSpace(elasticApi))
+    {
+        Console.WriteLine("(user, password) OR Api are required**");
+        Environment.Exit(-3);
     }
 }
 
@@ -150,7 +165,7 @@ async Task ProcessDocumentAsync(string[] docPath)
 
 void IndexDocumentsAsync(string index, ReadOnlySpan<string[]> documents)
 {
-    extractToElastic = new ExtractToElastic(index, elasticUrl, elasticUser, elasticPassword);
+    extractToElastic = new ExtractToElastic(index, elasticUrl, elasticUser, elasticPassword, elasticApi);
     extractToElastic.CreateIndex(clearIndex).GetAwaiter().GetResult();
     foreach (var documentToIndex in documents)
     {
